@@ -1,4 +1,4 @@
-package com.mandelbrot.image;
+package com.mandelbrot;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,13 +20,16 @@ public class Image {
 
     private int width;
     private int height;
+    private byte[] imageAsBytes;
 
     public Image(int width, int height) {
         this.width = width;
         this.height = height;
+
+        imageAsBytes = new byte[width * height * 3];
     }
 
-    public void writePNGinRGB(byte[] imageAsBytes, String imagePath) throws Exception {
+    public void writePNGinRGB(String imagePath) throws Exception {
         if (imageAsBytes.length != width * height * 3) {
             throw new Exception("Image size to data mismatch.");
         }
@@ -45,5 +48,21 @@ public class Image {
         } catch (IOException ex) {
             throw new Exception(ex.getMessage(), ex);
         }
+    }
+
+    public void writePixel(int topOffset, int leftOffset, RGB color) {
+        int pos = topOffset * width * 3 + leftOffset * 3;
+
+        imageAsBytes[pos] = color.r;
+        imageAsBytes[pos + 1] = color.g;
+        imageAsBytes[pos + 2] = color.b;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }
