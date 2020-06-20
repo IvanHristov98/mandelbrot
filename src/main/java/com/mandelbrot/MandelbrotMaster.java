@@ -1,5 +1,8 @@
 package com.mandelbrot;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 public class MandelbrotMaster {
     private Image image;
     private Frame frame;
@@ -9,17 +12,46 @@ public class MandelbrotMaster {
         this.frame = frame;
     }
 
-    public void generate(int granularity) {
-        double frameSegmentHeight = getFrameHeight() / granularity;
-        int imageSegmentHeight = image.getHeight() / granularity;
+    public void generate(int granularity, int processors) throws InterruptedException {
+        int numTasks = granularity * processors;
+        double frameSegmentHeight = getFrameHeight() / numTasks;
+        int imageSegmentHeight = image.getHeight() / numTasks;
 
-        for (int i = 0; i < granularity; i++) {
-            Frame slaveFrame = new Frame(frame.bottom + frameSegmentHeight * i,
-                    frame.bottom + frameSegmentHeight * (i + 1), frame.left, frame.right);
-            Segment slaveSegment = new Segment(0 + imageSegmentHeight * i, imageSegmentHeight, slaveFrame);
-            MandelbrotSlave slave = new MandelbrotSlave(image, slaveSegment);
+        BlockingQueue<Integer> slaveQueue = new LinkedBlockingQueue<>(processors);
 
-            slave.run();
+        for (int i = 0; i < processors; i++) {
+            slaveQueue.put(i);
+        }
+
+        int cnt = 0;
+
+        while (true) {
+            if (cnt == numTasks) {
+                break;
+            }
+
+            int slaveID = slaveQueue.take();
+
+            Frame slaveFrame = new Frame(frame.bottom + frameSegmentHeight * cnt,
+                    frame.bottom + frameSegmentHeight * (cnt + 1), frame.left, frame.right);
+            Segment slaveSegment = new Segment(0 + imageSegmentHeight * cnt, imageSegmentHeight, slaveFrame);
+            MandelbrotSlave slave = new MandelbrotSlave(image, slaveSegment, slaveID, slaveQueue);
+
+            Thread slaveThread = new Thread(slave);
+            slaveThread.start();
+
+            cnt++;
+        }
+
+        cnt = 0;
+
+        while (true) {
+            slaveQueue.take();
+            cnt++;
+
+            if (cnt == processors) {
+                break;
+            }
         }
     }
 

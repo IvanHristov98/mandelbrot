@@ -7,9 +7,9 @@ public class App {
         Frame frame = new Frame(-2.0, 2.0, -2.0, 2.0);
 
         MandelbrotMaster master = new MandelbrotMaster(image, frame);
-        master.generate(3);
 
         try {
+            master.generate(4, 4);
             image.writePNGinRGB("image.png");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

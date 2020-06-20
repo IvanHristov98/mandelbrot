@@ -1,6 +1,7 @@
 package com.mandelbrot;
 
 import java.lang.Math;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.commons.math3.complex.Complex;
 
@@ -10,14 +11,31 @@ public class MandelbrotSlave implements Runnable {
 
     private Image image;
     private Segment segment;
+    private int id;
+    private BlockingQueue<Integer> slaveQueue;
 
-    public MandelbrotSlave(Image image, Segment segment) {
+    public MandelbrotSlave(Image image, Segment segment, int id, BlockingQueue<Integer> slaveQueue) {
         this.image = image;
         this.segment = segment;
+        this.id = id;
+        this.slaveQueue = slaveQueue;
     }
 
     public void run() {
+        System.out.println("Started slave " + id);
         generate(segment.frame, DEFAULT_NUM_ITERATIONS);
+
+        try {
+            slaveQueue.put(id);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        System.out.println("Stopped slave " + id);
+    }
+
+    public int getID() {
+        return id;
     }
 
     private void generate(Frame frame, int maxIterations) {
@@ -64,7 +82,7 @@ public class MandelbrotSlave implements Runnable {
         return Math.sqrt(num.getReal() * num.getReal() + num.getImaginary() * num.getImaginary());
     }
 
-    private void drawPixel(int topOffset, int leftOffset, byte depth) {
+    private synchronized void drawPixel(int topOffset, int leftOffset, byte depth) {
         byte depthComplement = (byte) (255 - depth);
         RGB pixelColor = new RGB(depthComplement, (byte) (depthComplement * 2), (byte) (depthComplement * 3));
 
