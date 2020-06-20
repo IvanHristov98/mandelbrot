@@ -6,7 +6,7 @@ import org.apache.commons.math3.complex.Complex;
 
 public class Mandelbrot {
     public static int DEFAULT_NUM_ITERATIONS = 255;
-    public static double DEFAULT_ESCAPE_RADIUS = 2.0;
+    public static double DEFAULT_ESCAPE_RADIUS = 4.0;
 
     private Image image;
 
@@ -40,13 +40,14 @@ public class Mandelbrot {
 
     private int testInMandelbrot(double x, double y, int maxIterations) {
         Complex currVal = new Complex(0.0, 0.0);
-        Complex addition = new Complex(x, y);
+        Complex constant = new Complex(x, y);
+        Complex e = new Complex(Math.E, 0.0);
 
         for (int i = 0; i < maxIterations; i++) {
             if (currVal.getReal() != 0.0 || currVal.getImaginary() != 0.0) {
-                currVal = currVal.pow(2).add(addition);
+                currVal = e.pow((currVal.pow(2)).add(constant));
             } else {
-                currVal = currVal.add(addition);
+                currVal = e.pow(currVal.add(constant));
             }
 
             if (magnitude(currVal) > DEFAULT_ESCAPE_RADIUS) {
