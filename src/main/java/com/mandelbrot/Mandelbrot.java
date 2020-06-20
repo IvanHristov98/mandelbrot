@@ -6,7 +6,7 @@ import org.apache.commons.math3.complex.Complex;
 
 public class Mandelbrot {
     public static int DEFAULT_NUM_ITERATIONS = 255;
-    public static double DEFAULT_ESCAPE_RADIUS = 4.0;
+    public static double DEFAULT_ESCAPE_RADIUS = 2.0;
 
     private Image image;
 
@@ -39,18 +39,18 @@ public class Mandelbrot {
     }
 
     private int testInMandelbrot(double x, double y, int maxIterations) {
-        Complex currVal = new Complex(0.0, 0.0);
-        Complex constant = new Complex(x, y);
-        Complex e = new Complex(Math.E, 0.0);
+        Complex z = new Complex(0.0, 0.0);
+        Complex c = new Complex(x, y);
+        Complex e = new Complex(Math.E, 0);
 
         for (int i = 0; i < maxIterations; i++) {
-            if (currVal.getReal() != 0.0 || currVal.getImaginary() != 0.0) {
-                currVal = e.pow((currVal.pow(2)).add(constant));
+            if (z.getReal() != 0.0 || z.getImaginary() != 0.0) {
+                z = e.pow(z.pow(2.0).add(c));
             } else {
-                currVal = e.pow(currVal.add(constant));
+                z = e.pow(z.add(c));
             }
 
-            if (magnitude(currVal) > DEFAULT_ESCAPE_RADIUS) {
+            if (magnitude(z) > DEFAULT_ESCAPE_RADIUS) {
                 return i;
             }
         }
@@ -59,7 +59,7 @@ public class Mandelbrot {
     }
 
     private double magnitude(Complex num) {
-        return Math.sqrt(Math.pow(num.getReal(), 2) + Math.pow(num.getImaginary(), 2));
+        return Math.sqrt(num.getReal() * num.getReal() + num.getImaginary() * num.getImaginary());
     }
 
     private void drawPixel(int topOffset, int leftOffset, byte depth) {
