@@ -34,7 +34,7 @@ public class MandelbrotMaster {
 
             Frame slaveFrame = new Frame(frame.bottom + frameSegmentHeight * cnt,
                     frame.bottom + frameSegmentHeight * (cnt + 1), frame.left, frame.right);
-            Segment slaveSegment = new Segment(0 + imageSegmentHeight * cnt, imageSegmentHeight, slaveFrame);
+            Segment slaveSegment = new Segment(imageSegmentHeight * cnt, imageSegmentHeight, slaveFrame);
             MandelbrotSlave slave = new MandelbrotSlave(image, slaveSegment, slaveID, slaveQueue);
 
             Thread slaveThread = new Thread(slave);

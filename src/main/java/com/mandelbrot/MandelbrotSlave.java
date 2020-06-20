@@ -46,7 +46,7 @@ public class MandelbrotSlave implements Runnable {
 
                 int depth = testInMandelbrot(x, y, maxIterations);
 
-                drawPixel(i + segment.topOffset, j, (byte) depth);
+                drawPixel(i + segment.topOffset, j, depth);
             }
         }
     }
@@ -82,10 +82,35 @@ public class MandelbrotSlave implements Runnable {
         return Math.sqrt(num.getReal() * num.getReal() + num.getImaginary() * num.getImaginary());
     }
 
-    private synchronized void drawPixel(int topOffset, int leftOffset, byte depth) {
-        byte depthComplement = (byte) (255 - depth);
-        RGB pixelColor = new RGB(depthComplement, (byte) (depthComplement * 2), (byte) (depthComplement * 3));
+    private synchronized void drawPixel(int topOffset, int leftOffset, int depth) {
+        int r = 0;
+        int g = 0;
+        int b = 0;
 
-        image.writePixel(topOffset, leftOffset, pixelColor);
+        if (depth <= 10) {
+            r = (10 - depth) * 25;
+            b = (10 - depth) * 25 + 25;
+            g = (10 - depth) * 25;
+        } else if (depth <= 15) {
+            r = (15 - depth) * 35;
+            b = depth * 35;
+        } else if (depth <= 40) {
+            r = (10 - depth) * 25;
+            b = depth * 25;
+        } else {
+            r = 0;
+            g = 0;
+            b = 0;
+        }
+
+        image.writePixel(topOffset, leftOffset, new RGB(ceilColor(r), ceilColor(g), ceilColor(b)));
+    }
+
+    private byte ceilColor(int col) {
+        if (col > 255) {
+            return (byte)255;
+        }
+
+        return (byte)col;
     }
 }
