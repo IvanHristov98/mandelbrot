@@ -4,31 +4,33 @@ import java.lang.Math;
 
 import org.apache.commons.math3.complex.Complex;
 
-public class Mandelbrot {
+public class MandelbrotSlave implements Runnable {
     public static int DEFAULT_NUM_ITERATIONS = 255;
     public static double DEFAULT_ESCAPE_RADIUS = 2.0;
 
     private Image image;
+    private Segment segment;
 
-    public Mandelbrot(Image image) {
+    public MandelbrotSlave(Image image, Segment segment) {
         this.image = image;
+        this.segment = segment;
     }
 
-    public void generate(Frame frame, int maxIterations) {
-        for (int i = 0; i < image.getHeight(); i++) {
+    public void run() {
+        generate(segment.frame, DEFAULT_NUM_ITERATIONS);
+    }
+
+    private void generate(Frame frame, int maxIterations) {
+        for (int i = 0; i < segment.height; i++) {
             for (int j = 0; j < image.getWidth(); j++) {
                 double x = pixToPos(frame.left, frame.right, image.getWidth(), j);
-                double y = pixToPos(frame.bottom, frame.top, image.getHeight(), i);
+                double y = pixToPos(frame.bottom, frame.top, segment.height, i);
 
                 int depth = testInMandelbrot(x, y, maxIterations);
 
-                drawPixel(i, j, (byte) depth);
+                drawPixel(i + segment.topOffset, j, (byte) depth);
             }
         }
-    }
-
-    public void writeImage(String filePath) throws Exception {
-        image.writePNGinRGB(filePath);
     }
 
     private double pixToPos(double low, double high, int lengthInPixels, int pixelsOffset) {
