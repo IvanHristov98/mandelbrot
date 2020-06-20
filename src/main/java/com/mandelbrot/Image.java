@@ -51,7 +51,8 @@ public class Image {
     }
 
     public void writePixel(int topOffset, int leftOffset, RGB color) {
-        int pos = topOffset * width * 3 + leftOffset * 3;
+        int pos = topOffset * width * 3 + (width - leftOffset) * 3;
+        pos = imageAsBytes.length - pos;
 
         imageAsBytes[pos] = color.r;
         imageAsBytes[pos + 1] = color.g;
