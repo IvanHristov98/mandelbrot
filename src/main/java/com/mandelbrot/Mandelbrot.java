@@ -1,5 +1,7 @@
 package com.mandelbrot;
 
+import java.lang.Math;
+
 import org.apache.commons.math3.complex.Complex;
 
 public class Mandelbrot {
@@ -18,13 +20,9 @@ public class Mandelbrot {
                 double x = pixToPos(frame.left, frame.right, image.getWidth(), j);
                 double y = pixToPos(frame.bottom, frame.top, image.getHeight(), i);
 
-                int inMandelbrot = testInMandelbrot(x, y, maxIterations);
+                int depth = testInMandelbrot(x, y, maxIterations);
 
-                if (inMandelbrot < maxIterations) {
-                    image.writePixel(i, j, new RGB((byte) 255, (byte) 255, (byte) 255));
-                } else {
-                    image.writePixel(i, j, new RGB((byte) 100, (byte) 100, (byte) 100));
-                }
+                drawPixel(i, j, (byte) depth);
             }
         }
     }
@@ -61,5 +59,12 @@ public class Mandelbrot {
 
     private double magnitude(Complex num) {
         return Math.sqrt(Math.pow(num.getReal(), 2) + Math.pow(num.getImaginary(), 2));
+    }
+
+    private void drawPixel(int topOffset, int leftOffset, byte depth) {
+        byte depthComplement = (byte) (255 - depth);
+        RGB pixelColor = new RGB(depthComplement, (byte) (depthComplement * 2), (byte) (depthComplement * 3));
+
+        image.writePixel(topOffset, leftOffset, pixelColor);
     }
 }
