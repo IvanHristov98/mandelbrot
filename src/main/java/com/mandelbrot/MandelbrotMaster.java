@@ -19,7 +19,6 @@ public class MandelbrotMaster {
 
         double imageSegmentHeight = (double) (image.getHeight()) / numTasks;
         double frameSegmentHeight = (getFrameHeight() / numTasks);
-        // * ((double) (imageSegmentHeight * numTasks) / image.getHeight());
 
         BlockingQueue<Integer> slaveQueue = new LinkedBlockingQueue<>(processors);
 
