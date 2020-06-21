@@ -55,11 +55,11 @@ public class MandelbrotSlave implements Runnable {
         for (int i = 0; i < segment.height; i++) {
             for (int j = 0; j < image.getWidth(); j++) {
                 double x = pixToPos(frame.left, frame.right, image.getWidth(), j);
-                double y = pixToPos(frame.bottom, frame.top, segment.height, i);
+                double y = pixToPos(frame.bottom, frame.top, (int) Math.floor(segment.height), i);
 
                 int depth = testInMandelbrot(x, y, maxIterations);
 
-                drawPixel(i + segment.topOffset, j, depth);
+                drawPixel(i + (int) Math.floor(segment.topOffset), j, depth);
             }
         }
     }

@@ -16,8 +16,10 @@ public class MandelbrotMaster {
 
     public void generate(int granularity, int processors) throws InterruptedException {
         int numTasks = granularity * processors;
-        double frameSegmentHeight = getFrameHeight() / numTasks;
-        int imageSegmentHeight = image.getHeight() / numTasks;
+
+        double imageSegmentHeight = (double) (image.getHeight()) / numTasks;
+        double frameSegmentHeight = (getFrameHeight() / numTasks);
+        // * ((double) (imageSegmentHeight * numTasks) / image.getHeight());
 
         BlockingQueue<Integer> slaveQueue = new LinkedBlockingQueue<>(processors);
 

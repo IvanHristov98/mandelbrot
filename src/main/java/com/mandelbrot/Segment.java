@@ -1,11 +1,11 @@
 package com.mandelbrot;
 
 public class Segment {
-    public int topOffset;
-    public int height;
+    public double topOffset;
+    public double height;
     public Frame frame;
 
-    public Segment(int topOffset, int height, Frame frame) {
+    public Segment(double topOffset, double height, Frame frame) {
         this.topOffset = topOffset;
         this.height = height;
         this.frame = frame;
