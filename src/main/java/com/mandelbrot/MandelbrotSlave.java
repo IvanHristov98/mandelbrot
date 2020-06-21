@@ -13,18 +13,23 @@ public class MandelbrotSlave implements Runnable {
     private Segment segment;
     private int id;
     private BlockingQueue<Integer> slaveQueue;
+    private boolean isQuiet;
 
-    public MandelbrotSlave(Image image, Segment segment, int id, BlockingQueue<Integer> slaveQueue) {
+    public MandelbrotSlave(Image image, Segment segment, int id, BlockingQueue<Integer> slaveQueue, boolean isQuiet) {
         this.image = image;
         this.segment = segment;
         this.id = id;
         this.slaveQueue = slaveQueue;
+        this.isQuiet = isQuiet;
     }
 
     public void run() {
         long startTime = System.currentTimeMillis();
 
-        System.out.println("Thread-" + id + " started.");
+        if (!isQuiet) {
+            System.out.println("Thread-" + id + " started.");
+        }
+
         generate(segment.frame, DEFAULT_NUM_ITERATIONS);
 
         try {
@@ -33,11 +38,13 @@ public class MandelbrotSlave implements Runnable {
             System.out.println(ex.getMessage());
         }
 
-        System.out.println("Thread-" + id + " stopped.");
+        if (!isQuiet) {
+            System.out.println("Thread-" + id + " stopped.");
 
-        long endTime = System.currentTimeMillis();
-        long totalTime = endTime - startTime;
-        System.out.println("Thread-" + id + " execution time was (millis): " + totalTime);
+            long endTime = System.currentTimeMillis();
+            long totalTime = endTime - startTime;
+            System.out.println("Thread-" + id + " execution time was (millis): " + totalTime);
+        }
     }
 
     public int getID() {
@@ -114,9 +121,9 @@ public class MandelbrotSlave implements Runnable {
 
     private byte ceilColor(int col) {
         if (col > 255) {
-            return (byte)255;
+            return (byte) 255;
         }
 
-        return (byte)col;
+        return (byte) col;
     }
 }

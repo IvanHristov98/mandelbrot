@@ -6,10 +6,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class MandelbrotMaster {
     private Image image;
     private Frame frame;
+    private boolean isQuiet;
 
-    public MandelbrotMaster(Image image, Frame frame) {
+    public MandelbrotMaster(Image image, Frame frame, boolean isQuiet) {
         this.image = image;
         this.frame = frame;
+        this.isQuiet = isQuiet;
     }
 
     public void generate(int granularity, int processors) throws InterruptedException {
@@ -35,7 +37,7 @@ public class MandelbrotMaster {
             Frame slaveFrame = new Frame(frame.bottom + frameSegmentHeight * cnt,
                     frame.bottom + frameSegmentHeight * (cnt + 1), frame.left, frame.right);
             Segment slaveSegment = new Segment(imageSegmentHeight * cnt, imageSegmentHeight, slaveFrame);
-            MandelbrotSlave slave = new MandelbrotSlave(image, slaveSegment, slaveID, slaveQueue);
+            MandelbrotSlave slave = new MandelbrotSlave(image, slaveSegment, slaveID, slaveQueue, isQuiet);
 
             Thread slaveThread = new Thread(slave);
             slaveThread.start();
