@@ -20,7 +20,7 @@ public class CommandArgs {
     private boolean quiet = false;
     private boolean help = false;
 
-    public CommandArgs(String[] args) throws ParseException {
+    public CommandArgs(String[] args) throws ParseException, Exception {
         CommandLineParser parser = new DefaultParser();
         Options options = getOptions();
         CommandLine line = parser.parse(options, args);
@@ -88,30 +88,51 @@ public class CommandArgs {
         options.addOption("t", "tasks", true, "The number of threads to run the program with.");
         options.addOption("o", "output", true, "The file path of the output image.");
         options.addOption("q", "quiet", false, "Specifies if program should output logs.");
-        options.addOption("g", "granularity", true, "Specifies the granularity of the program. For example 1, 2, 4 or 8.");
+        options.addOption("g", "granularity", true,
+                "Specifies the granularity of the program. For example 1, 2, 4 or 8.");
         options.addOption("h", "help", false, "Prints the program options.");
 
         return options;
     }
 
-    private void readSize(CommandLine line) {
+    private void readSize(CommandLine line) throws Exception {
         if (line.hasOption("s")) {
             String size = line.getOptionValue("s");
+
+            if (!size.matches("[0-9]+x[0-9]+")) {
+                throw new Exception("Size argument doesn't fit the specification. An example would be '640x480'.");
+            }
+
             String[] parts = size.split("x");
             width = Integer.parseInt(parts[0]);
             height = Integer.parseInt(parts[1]);
         }
     }
 
-    private void readFrame(CommandLine line) {
+    private void readFrame(CommandLine line) throws Exception {
         if (line.hasOption("r")) {
-            String size = line.getOptionValue("r");
-            String[] parts = size.split(":");
+            String rect = line.getOptionValue("r");
+
+            if (!rect.matches("[\\-0-9\\.]+:[\\-0-9\\.]+:[\\-0-9\\.]+:[\\-0-9\\.]+")) {
+                throw new Exception(
+                        "Rect argument doesn't fit the specification. An example would be '-2.0:2.0:-1.0:1.0'.");
+            }
+
+            String[] parts = rect.split(":");
 
             frameLeft = Double.parseDouble(parts[0]);
             frameRight = Double.parseDouble(parts[1]);
+
+            if (frameLeft >= frameRight) {
+                throw new Exception("In the rect argument the left should be smaller than the right.");
+            }
+
             frameBottom = Double.parseDouble(parts[2]);
             frameTop = Double.parseDouble(parts[3]);
+
+            if (frameBottom >= frameTop) {
+                throw new Exception("In the rect argument the bottom should be smaller than the top.");
+            }
         }
     }
 
