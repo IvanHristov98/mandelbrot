@@ -22,7 +22,9 @@ public class MandelbrotSlave implements Runnable {
     }
 
     public void run() {
-        System.out.println("Started slave " + id);
+        long startTime = System.currentTimeMillis();
+
+        System.out.println("Thread-" + id + " started.");
         generate(segment.frame, DEFAULT_NUM_ITERATIONS);
 
         try {
@@ -31,7 +33,11 @@ public class MandelbrotSlave implements Runnable {
             System.out.println(ex.getMessage());
         }
 
-        System.out.println("Stopped slave " + id);
+        System.out.println("Thread-" + id + " stopped.");
+
+        long endTime = System.currentTimeMillis();
+        long totalTime = endTime - startTime;
+        System.out.println("Thread-" + id + " execution time was (millis): " + totalTime);
     }
 
     public int getID() {
