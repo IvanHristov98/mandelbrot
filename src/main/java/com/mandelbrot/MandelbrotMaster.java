@@ -17,7 +17,7 @@ public class MandelbrotMaster {
     public void generate(int granularity, int processors) throws InterruptedException {
         int numTasks = granularity * processors;
         double frameSegmentHeight = getFrameHeight() / numTasks;
-        int imageSegmentHeight = image.getHeight() / numTasks;
+        int imageSegmentHeight = (int) Math.ceil((double) (image.getHeight()) / numTasks);
 
         BlockingQueue<Integer> slaveQueue = new LinkedBlockingQueue<>(processors);
 
@@ -38,6 +38,13 @@ public class MandelbrotMaster {
                     frame.bottom + frameSegmentHeight * (cnt + 1), frame.left, frame.right);
             Segment slaveSegment = new Segment(imageSegmentHeight * cnt, imageSegmentHeight, slaveFrame);
             MandelbrotSlave slave = new MandelbrotSlave(image, slaveSegment, slaveID, slaveQueue, isQuiet);
+
+            if (slaveSegment.topOffset + slaveSegment.height >= image.getHeight()) {
+                slaveSegment.height = image.getHeight() - slaveSegment.topOffset;
+
+                // Break cycle.
+                cnt = numTasks - 1;
+            }
 
             Thread slaveThread = new Thread(slave);
             slaveThread.start();
