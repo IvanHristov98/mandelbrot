@@ -7,7 +7,7 @@ import org.apache.commons.math3.complex.Complex;
 
 public class MandelbrotSlave implements Runnable {
     public static int DEFAULT_NUM_ITERATIONS = 255;
-    public static double DEFAULT_ESCAPE_RADIUS = 2.0;
+    public static double DEFAULT_ESCAPE_RADIUS = 500.0;
 
     private Image image;
     private Segment segment;
