@@ -18,10 +18,11 @@ public class App {
 
             MandelbrotMaster master = new MandelbrotMaster(image, frame, cmdArgs.getQuiet());
             master.generate(cmdArgs.getGranularity(), cmdArgs.getNumThreads());
-            image.writePNGinRGB(cmdArgs.getOutputFile());
 
             long endTime = System.currentTimeMillis();
             long totalTime = endTime - startTime;
+
+            image.writePNGinRGB(cmdArgs.getOutputFile());
 
             if (!cmdArgs.getQuiet()) {
                 System.out.println("Threads used in current run: " + cmdArgs.getNumThreads());
